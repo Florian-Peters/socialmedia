@@ -1,3 +1,4 @@
+
 //
 //  ContentView.swift
 //  LocalVibes
@@ -7,15 +8,17 @@
 
 import SwiftUI
 
+
 struct ContentView: View {
+    @AppStorage("log_status") var logStatus: Bool = false
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        //MARK: Redicting User Based on Log
+        if logStatus{
+         MainView()
+        }else{
+        
+            LoginView()
         }
-        .padding()
     }
 }
 
