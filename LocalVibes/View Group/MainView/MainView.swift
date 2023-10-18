@@ -23,6 +23,7 @@ struct MainView: View {
                     Text("Profile")
                 }
         }
+        .tint(.black)
     }
 }
 

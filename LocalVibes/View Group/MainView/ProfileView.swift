@@ -7,22 +7,24 @@
 
 import SwiftUI
 import Firebase
+import FirebaseDatabase
+import FirebaseFirestore
+import FirebaseStorage
 
 struct ProfileView: View {
     // MARK: My Profile Data
     @State private var myProfile: User?
     @AppStorage("log_status") var logStatus: Bool = false
-
+    //MARK ERROR MESSAGE
+    @State var errorMessage: String = ""
+    @State var showEror: Bool = false
+    @State var isLoading : Bool = false
+    
+    
     var body: some View {
         NavigationView {
             ScrollView(.vertical, showsIndicators: false) {
-                if let user = myProfile {
-                    Text("Name: ")
-                    Text("Email: ")
-                    // Add more profile information here
-                } else {
-                    Text("Loading profile...")
-                }
+                
             }
             .refreshable {
                 // TODO: Implement a refresh action to update the user's profile data
@@ -35,7 +37,7 @@ struct ProfileView: View {
                             logOutUser()
                         }
                         Button("Delete Account", role: .destructive) {
-                            // Add code to delete the user's account
+                            deleteAccount()
                         }
                     } label: {
                         Image(systemName: "ellipsis")
@@ -46,16 +48,52 @@ struct ProfileView: View {
                 }
             }
         }
+        .overlay{
+            LoadingView(show: $isLoading)
+        }
+        .alert(errorMessage, isPresented: $showEror)
+        {
+            
+        }
     }
-
+    
     func logOutUser() {
         try? Auth.auth().signOut()
         logStatus = false
     }
-}
-
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+    
+    func deleteAccount(){
+        isLoading = true
+        Task{
+            do{
+                guard let userUID = Auth.auth().currentUser?.uid else{return}
+                let reference = Storage.storage().reference().child("/Profiel_Images").child(userUID)
+                 try await reference.delete()
+                 try await  Firestore.firestore().collection("Users").document(userUID).delete()
+                 try await Auth.auth().currentUser?.delete()
+                 logStatus = false
+                
+            }catch{
+                await setError(error)
+                
+                
+            }
+        }
+        
+        //Setting Error
+        @Sendable func setError(_ error: Error)async{
+            await MainActor.run {
+                isLoading = false
+                errorMessage = error.localizedDescription
+                showEror.toggle()
+            }
+        }
+    }
+    
+    
+    struct ProfileView_Previews: PreviewProvider {
+        static var previews: some View {
+            ContentView()
+        }
     }
 }
