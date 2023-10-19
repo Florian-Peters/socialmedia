@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B0862B262AE00AEC00946EAD /* ResusableProfileContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0862B252AE00AEC00946EAD /* ResusableProfileContent.swift */; };
+		B0862B292AE00F0A00946EAD /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B0862B282AE00F0A00946EAD /* SDWebImageSwiftUI */; };
 		B0DE03972ADE62800069E7DD /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DE03962ADE62800069E7DD /* LoginView.swift */; };
 		B0DE039B2ADE64090069E7DD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DE039A2ADE64090069E7DD /* User.swift */; };
 		B0DE039D2ADE64AD0069E7DD /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DE039C2ADE64AD0069E7DD /* LoadingView.swift */; };
@@ -60,6 +62,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B0862B252AE00AEC00946EAD /* ResusableProfileContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResusableProfileContent.swift; sourceTree = "<group>"; };
 		B0DE03962ADE62800069E7DD /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		B0DE039A2ADE64090069E7DD /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		B0DE039C2ADE64AD0069E7DD /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
@@ -84,6 +87,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0862B292AE00F0A00946EAD /* SDWebImageSwiftUI in Frameworks */,
 				B0DE03AB2ADE6D9D0069E7DD /* FirebaseFirestoreSwift in Frameworks */,
 				B0DE03A42ADE670D0069E7DD /* FirebaseDatabase in Frameworks */,
 				B0DE03A82ADE670D0069E7DD /* FirebaseStorage in Frameworks */,
@@ -149,6 +153,7 @@
 				B0DE03B02ADE93050069E7DD /* Helpers */,
 				B0DE03B32ADE950B0069E7DD /* MainView.swift */,
 				B0DE03B52ADE981A0069E7DD /* ProfileView.swift */,
+				B0862B252AE00AEC00946EAD /* ResusableProfileContent.swift */,
 			);
 			path = MainView;
 			sourceTree = "<group>";
@@ -243,6 +248,7 @@
 				B0DE03A52ADE670D0069E7DD /* FirebaseFirestore */,
 				B0DE03A72ADE670D0069E7DD /* FirebaseStorage */,
 				B0DE03AA2ADE6D9D0069E7DD /* FirebaseFirestoreSwift */,
+				B0862B282AE00F0A00946EAD /* SDWebImageSwiftUI */,
 			);
 			productName = LocalVibes;
 			productReference = B0ED8F4B2AD6A29600B9F428 /* LocalVibes.app */;
@@ -318,6 +324,7 @@
 			mainGroup = B0ED8F422AD6A29600B9F428;
 			packageReferences = (
 				B0DE03A02ADE670D0069E7DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B0862B272AE00F0A00946EAD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			productRefGroup = B0ED8F4C2AD6A29600B9F428 /* Products */;
 			projectDirPath = "";
@@ -369,6 +376,7 @@
 				B0DE03B22ADE93410069E7DD /* View+Extansions.swift in Sources */,
 				B0DE03AF2ADE92240069E7DD /* RegisterView.swift in Sources */,
 				B0DE039D2ADE64AD0069E7DD /* LoadingView.swift in Sources */,
+				B0862B262AE00AEC00946EAD /* ResusableProfileContent.swift in Sources */,
 				B0ED8F4F2AD6A29600B9F428 /* LocalVibesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -701,6 +709,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B0862B272AE00F0A00946EAD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.3;
+			};
+		};
 		B0DE03A02ADE670D0069E7DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -712,6 +728,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B0862B282AE00F0A00946EAD /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B0862B272AE00F0A00946EAD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
 		B0DE03A12ADE670D0069E7DD /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B0DE03A02ADE670D0069E7DD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

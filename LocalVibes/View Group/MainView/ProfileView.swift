@@ -15,19 +15,27 @@ struct ProfileView: View {
     // MARK: My Profile Data
     @State private var myProfile: User?
     @AppStorage("log_status") var logStatus: Bool = false
-    //MARK ERROR MESSAGE
+    // MARK: ERROR MESSAGE
     @State var errorMessage: String = ""
     @State var showEror: Bool = false
     @State var isLoading : Bool = false
     
-    
     var body: some View {
         NavigationView {
             ScrollView(.vertical, showsIndicators: false) {
-                
-            }
-            .refreshable {
-                // TODO: Implement a refresh action to update the user's profile data
+                VStack {
+                    if let myProfile {
+                        ResusableProfileContent(user: myProfile)
+                            .refreshable {
+                                
+                                self.myProfile = nil
+                                await fetchUserData()
+                            }
+                    } else {
+                        
+                        ProgressView()
+                    }
+                }
             }
             .navigationTitle("My Profile")
             .toolbar {
@@ -48,12 +56,27 @@ struct ProfileView: View {
                 }
             }
         }
-        .overlay{
+        .overlay {
             LoadingView(show: $isLoading)
         }
-        .alert(errorMessage, isPresented: $showEror)
-        {
-            
+        .alert(errorMessage, isPresented: $showEror) {}
+        .task {
+            if myProfile != nil {
+                return
+            }
+            await fetchUserData()
+        }
+    }
+    
+    func fetchUserData() async {
+        guard let userUID = Auth.auth().currentUser?.uid else {
+            return
+        }
+        guard let user = try? await Firestore.firestore().collection("Users").document(userUID).getDocument(as: User.self) else {
+            return
+        }
+        await MainActor.run {
+            myProfile = user
         }
     }
     
@@ -62,38 +85,36 @@ struct ProfileView: View {
         logStatus = false
     }
     
-    func deleteAccount(){
+    func deleteAccount() {
         isLoading = true
-        Task{
-            do{
-                guard let userUID = Auth.auth().currentUser?.uid else{return}
+        Task {
+            do {
+                guard let userUID = Auth.auth().currentUser?.uid else {
+                    return
+                }
                 let reference = Storage.storage().reference().child("/Profiel_Images").child(userUID)
-                 try await reference.delete()
-                 try await  Firestore.firestore().collection("Users").document(userUID).delete()
-                 try await Auth.auth().currentUser?.delete()
-                 logStatus = false
-                
-            }catch{
+                try await reference.delete()
+                try await Firestore.firestore().collection("Users").document(userUID).delete()
+                try await Auth.auth().currentUser?.delete()
+                logStatus = false
+            } catch {
                 await setError(error)
-                
-                
-            }
-        }
-        
-        //Setting Error
-        @Sendable func setError(_ error: Error)async{
-            await MainActor.run {
-                isLoading = false
-                errorMessage = error.localizedDescription
-                showEror.toggle()
             }
         }
     }
     
-    
-    struct ProfileView_Previews: PreviewProvider {
-        static var previews: some View {
-            ContentView()
+    // Setting Error
+    @Sendable func setError(_ error: Error) async {
+        await MainActor.run {
+            isLoading = false
+            errorMessage = error.localizedDescription
+            showEror.toggle()
         }
+    }
+}
+
+struct ProfileView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }
