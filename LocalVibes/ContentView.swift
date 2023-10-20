@@ -16,9 +16,10 @@ struct ContentView: View {
         if logStatus{
          MainView()
         }else{
-        
-            LoginView()
+          LoginView()
         }
+      //  CreatNewPost{ _ in
+      // }
     }
 }
 
