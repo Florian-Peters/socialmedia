@@ -7,6 +7,8 @@
 
 import SwiftUI
 import PhotosUI
+import Firebase
+import FirebaseStorage
 
 struct CreatNewPost: View {
     // Callbacks
@@ -41,7 +43,7 @@ struct CreatNewPost: View {
                 }
                 .hAlign(.leading)
                 
-                Button(action: {}){
+                Button(action: creatPost){
                     Text("Post")
                         .font(.callout)
                         .foregroundColor(.white)
@@ -71,6 +73,21 @@ struct CreatNewPost: View {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: size.width, height: size.height)
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            
+                            //DELET BUtton
+                            .overlay(alignment: .topTrailing){
+                                Button{
+                                    withAnimation(.easeInOut(duration: 0.25)){
+                                        self.postImageData = nil
+                                    }
+                                    
+                                }label: {
+                                    Image(systemName: "trash")
+                                        .fontWeight(.bold)
+                                        .tint(.red)
+                                }
+                                .padding(10)
+                            }
                     }
                         .clipped()
                         .frame(height: 220)
@@ -97,6 +114,7 @@ struct CreatNewPost: View {
                     
                 }
             }
+            .foregroundColor(.black)
             .padding(.horizontal,15)
             .padding(.vertical,10)
         }
@@ -115,6 +133,60 @@ struct CreatNewPost: View {
                     }
                 }
             }
+        }
+        .alert(errorMessage, isPresented: $showError, actions: {})
+        
+        /// Loading View
+        .overlay{
+            LoadingView(show: $isLoading)
+        }
+            
+    }
+    func creatPost(){
+        isLoading = true
+        showKeyboard = false
+        Task{
+            do{
+                guard let profileURL = profileURL else{return}
+                
+                let imageReferenceID = "\(userUID)\(Date())"
+                let storageRef = Storage.storage().reference().child("Post_Image").child(imageReferenceID)
+                if let postImageData{
+                    let _ = try await storageRef.putDataAsync(postImageData)
+                    let downlaodURL = try await storageRef.downloadURL()
+                    
+                    let post = Post(text: postText, imageUrl: downlaodURL, imageReferenceID: imageReferenceID, userName: userName, userUID: userUID, userProfileURL: profileURL)
+                    try await createDocumentAtFirebase(post)
+                    
+                }else{
+                    
+                    let post = Post(text: postText, userName: userName, userUID: userUID, userProfileURL: profileURL)
+                    try await createDocumentAtFirebase(post)
+                }
+                
+            }catch{
+                await setError(error)
+                
+            }
+        }
+        
+    }
+    
+    func createDocumentAtFirebase(_ post: Post)async throws{
+        
+        let _ = try Firestore.firestore().collection("Posts").addDocument(from: post) { error in
+            if error == nil{
+                isLoading = false
+                onPost(post)
+                dismiss()
+            }
+        }
+    }
+    // Error alert:
+    func setError(_ error: Error)async{
+        await MainActor.run {
+            errorMessage = error.localizedDescription
+            showError.toggle()
         }
     }
 }
